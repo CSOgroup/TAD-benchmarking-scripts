@@ -1,5 +1,5 @@
 # TAD-benchmarking-scripts
-Repository containing the scripts regarding analyses in Zufferey &amp; Tavernari et al.
+Repository containing the scripts regarding some of the analyses in Zufferey &amp; Tavernari et al.
 
 Contact: giovanni.ciriello@unil.ch
 

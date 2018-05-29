@@ -21,3 +21,28 @@ _Output_
 _Requires_
 
 R
+
+**HistMod_script.sh** 
+
+This script assesses the share of TADs showing a significant H3K27me3/H3K36me3 log10-ratio for a given TAD partition.
+See methods section in Zufferey & Tavernari et al. for details.
+
+_Input_
+
+* TadsFile: Tab-separated file containing the list of TADs. Each line (no header) should represent a TAD, with genomic coordinates (chr, start, end)
+* h27_fc: BedGraph file containing the fold change vs control of ChIP-seq tracks for H3K27me3 mark
+* h36_fc: BedGraph file containing the fold change vs control of ChIP-seq tracks for H3K36me3 mark
+* chr: Chromosome
+* OutFolder: Folder where results should be saved
+* share: Share of average TAD size to use as bin size for permutation test
+* nshuf: Number of shufflings for permutation test
+* fdr_thresh: FDR threshold
+
+_Output_
+
+* Results_df\_\*.txt: the number of TADs, the binsize used for permutation and the share of TADs showing a significant H3K27me3/H3K36me3 log10-ratio
+* Density_lr\_\*.pdf: The density plot of H3K27me3/H3K36me3 log10-ratio in real and permuted scenarios
+
+_Requires_
+
+R

@@ -45,4 +45,8 @@ _Output_
 
 _Requires_
 
-R
+R, Python (numpy, pandas), bedtools
+
+_Calls_
+
+**HistMod_computeBinsizes_script.R**, **HistMod_binChr.py**, **HistMod_aggregateBdg.R**, **HistMod_FDRclassic_script.R**

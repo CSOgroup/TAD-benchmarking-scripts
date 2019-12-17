@@ -6,7 +6,6 @@ See methods section in Zufferey & Tavernari et al. for details.
 _Input_
 
 * TadsFile: Tab-separated file containing the list of TADs. Each line (no header) should represent a TAD, with genomic coordinates (chr, start, end)
-* chr: Chromosome (e.g. '6')
 * resolution_kb: Resolution in kb (e.g. '10')
 * OutFolder: Folder where results should be saved
 * ChrSizes_file: Tab-separated file containing the chromosome sizes. Each line should correspond to a chromosome (e.g. chr1   249250621)

@@ -1,11 +1,10 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 TadsFile = args[1] # Tab-separated file containing the list of TADs. Each line (no header) should represent a TAD, with genomic coordinates (chr, start, end)
-chr = as.numeric(args[2]) # Chromosome (e.g. '6')
-resolution_kb = as.numeric(args[3]) # Resolution in kb (e.g. '10')
-OutFolder = args[4] # Folder where results should be saved
-ChrSizes_file = args[5] # Tab-separated file containing the chromosome sizes. Each line should correspond to a chromosome (e.g. chr1   249250621)
-ProteinPeaks_Folder = args[6] # Folder containing the three lists of peaks, one for each protein, in .bed format. Each list should be named as 'protein'_peaks.bed (e.g. CTCF_peaks.bed)
+resolution_kb = as.numeric(args[2]) # Resolution in kb (e.g. '10')
+OutFolder = args[3] # Folder where results should be saved
+ChrSizes_file = args[4] # Tab-separated file containing the chromosome sizes. Each line should correspond to a chromosome (e.g. chr1   249250621)
+ProteinPeaks_Folder = args[5] # Folder containing the three lists of peaks, one for each protein, in .bed format. Each list should be named as 'protein'_peaks.bed (e.g. CTCF_peaks.bed)
 
 #### StructProt_EnrichBoundaries_script.R
 # Script to assess the enrichment of CTCF, RAD21 and SMC3 ChIP-seq peaks at TAD boundaries for a given TAD partition.
@@ -33,6 +32,9 @@ color3 = "orangered3"
 res_step = 5
 proteins = c("CTCF", "RAD21", "SMC3")
 
+Tads_chr <- read.table(TadsFile, quote = '', stringsAsFactors=FALSE, sep = "\t", header = FALSE)
+chr = as.numeric(substr(unique(Tads_chr$V1),4,nchar(unique(Tads_chr$V1))))
+
 ChrSizes = read.table(file = ChrSizes_file, quote = '', stringsAsFactors=FALSE, sep = "\t", header = FALSE)
 ChrSize = as.numeric(ChrSizes[ChrSizes[,1]==paste0('chr',as.character(chr)),2])
 
@@ -43,7 +45,7 @@ Final_Ratios_df <- data.frame(TadsFile = TadsFile, resolution_kb = NA, protein =
 Final_EnrichPeaks_df <- as.data.frame(matrix(nrow = 0, ncol = (as.integer(1000/res_step)+3) ))
 colnames(Final_EnrichPeaks_df) <- c("TadsFile", "resolution_kb", "protein", as.character(c(1:as.integer(1000/res_step))))
 
-Tads_chr <- read.table(TadsFile, quote = '', stringsAsFactors=FALSE, sep = "\t", header = FALSE)
+
 Allprots_enrichs <- data.frame(row.names = c(1:as.integer(1000/res_step)))
 
 for (protein in proteins)

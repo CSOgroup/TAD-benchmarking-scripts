@@ -15,13 +15,13 @@
 TadsFile="TopDom_final_domains.txt" # Tab-separated file containing the list of TADs. Each line (no header) should represent a TAD, with genomic coordinates (chr, start, end)
 h27_fc="HistoneSignals/ENCFF594HSG_chr6.bedGraph" # BedGraph file containing the fold change vs control of ChIP-seq tracks for H3K27me3 mark
 h36_fc="HistoneSignals/ENCFF662QFK_chr6.bedGraph" # BedGraph file containing the fold change vs control of ChIP-seq tracks for H3K36me3 mark
-chr=6 # Chromosome
-OutFolder="Outdir2/" # Folder where results should be saved
+OutFolder="testdir_histones/" # Folder where results should be saved
 share=0.1 # Share of average TAD size to use as bin size for permutation test
 nshuf=10 # Number of shufflings for permutation test
 fdr_thresh=0.1 # FDR threshold
 ###################
 
+chr=$(awk '{print $1}' TopDom_final_domains.txt | uniq | cut -c 4-)
 binsizes_file=${OutFolder}"/binsizedf_chr"${chr}"_share"${share}".txt"
 ./HistMod_computeBinsizes_script.R ${TadsFile} ${binsizes_file} ${share}
 
@@ -45,3 +45,6 @@ while read binsize; do
 done <${binsizes_file}
 
 ./HistMod_FDRclassic_script.R ${TadsFile} ${share} ${nshuf} ${fdr_thresh} ${chr} ${OutFolder} ${h27_binned} ${h36_binned}
+
+cd ${OutFolder}
+rm binsize* chr* h27* h36* 

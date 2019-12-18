@@ -116,13 +116,13 @@ distr_shuf_lr = as.numeric(unlist(Tads_ws[,paste0("avg_lr_shuf",c(1:nshuf))]))
 pdf(paste0(OutFolder, "Density_lr_binsize",binsize,"_Real_vs_Shuf.pdf"))
 d_shuf <- density(distr_shuf_lr, na.rm = T)
 d_real <- density(distr_real_lr, na.rm = T)
-plot(d_shuf, main = "Density plot of lr", xlab = "lr", ylab = "Density", col = "black")
+plot(d_shuf, main = "Density plot of H3K27me3/H3K36me3 log10-ratio", xlab = "H3K27me3/H3K36me3 log10-ratio", ylab = "Density", col = "black")
 lines(d_real, col = "red")
-legend(x="topright", legend = c("With random permutations", "Real"), col = c("black","red"), lty = 1)
+legend(x="topleft", legend = c("With random permutations", "Real"), col = c("black","red"), lty = 1)
 dev.off()
 
 Results_df[TadsFile,"binsize"] = binsize
 Results_df[TadsFile,"nTads"] = nrow(Tads)
 Results_df[TadsFile,"shareTadsSignif_lr_BH"] = sum(Tads_ws_lr$qval_BH<fdr_thresh)/nrow(Tads)
 
-write.table(Results_df, paste0(OutFolder, "Results_df_shuf",nshuf,"_share",share,"_fdrthresh",fdr_thresh,".txt"), sep = "\t", row.names = F, col.names = T )
+write.table(Results_df, paste0(OutFolder, "Results_df_shuf",nshuf,"_share",share,"_fdrthresh",fdr_thresh,".txt"), sep = "\t", row.names = F, col.names = T, quote = F )

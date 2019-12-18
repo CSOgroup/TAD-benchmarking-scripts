@@ -31,7 +31,6 @@ _Input_
 * TadsFile: Tab-separated file containing the list of TADs. Each line (no header) should represent a TAD, with genomic coordinates (chr, start, end)
 * h27_fc: BedGraph file containing the fold change vs control of ChIP-seq tracks for H3K27me3 mark
 * h36_fc: BedGraph file containing the fold change vs control of ChIP-seq tracks for H3K36me3 mark
-* chr: Chromosome
 * OutFolder: Folder where results should be saved
 * share: Share of average TAD size to use as bin size for permutation test
 * nshuf: Number of shufflings for permutation test

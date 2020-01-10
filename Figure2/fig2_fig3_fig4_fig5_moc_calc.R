@@ -1,4 +1,3 @@
-# 
 #' Calculate Measure of Concordance (MoC); adapted from formula given in Pfitzner et al. 2009
 #'
 #' @param file1 Path to file for 1st partition (3-column BED format chromo-start-end; no header)
@@ -14,7 +13,7 @@
 
 # requirement: doMC, foreach
 
-get_MoC <- function(file1, file2, chrSize, nCpu = 1, fillInter=FALSE, meanWithInter = FALSE, correctClust = FALSE, binSize = NA, noMinusOne = FALSE, fillInterGapZero = FALSE) {
+get_MoC <- function(file1, file2, chrSize, nCpu = 1, fillInter=TRUE, meanWithInter = FALSE, correctClust = FALSE, binSize = NA, noMinusOne = FALSE, fillInterGapZero = FALSE) {
 
   library(foreach)
   library(doMC)
@@ -31,13 +30,13 @@ get_MoC <- function(file1, file2, chrSize, nCpu = 1, fillInter=FALSE, meanWithIn
   if(fillInter & meanWithInter)
     stop("not meaningful")
   
-  if (file.info(file1)$size == 0) {
+  if (file.info(as.character(file1))$size == 0) {
     set1DT <- data.frame(chromo=character(0), start = numeric(0), end =numeric(0))
   } else {
     set1DT <- read.delim(file1, header = FALSE, stringsAsFactors = FALSE)
     colnames(set1DT) <- c("chromo", "start", "end")
   }
-  if (file.info(file2)$size == 0) {
+  if (file.info(as.character(file2))$size == 0) {
     set2DT <- data.frame(chromo=character(0), start = numeric(0), end =numeric(0))
   } else {
     set2DT <- read.delim(file2, header=FALSE, stringsAsFactors = FALSE)
@@ -151,6 +150,61 @@ get_MoC <- function(file1, file2, chrSize, nCpu = 1, fillInter=FALSE, meanWithIn
     MoC_score <- (MoC_score + MoC_score_inter)/2
   }
   MoC_score
+}
+
+
+################
+fill_part <- function(fillDT, chrSize) {
+  stopifnot(all(colnames(fillDT) == c("chromo", "start", "end")))
+  
+  if(nrow(fillDT) == 0) {
+    fillDT <- data.frame(chromo = "chr6",
+                                  start = 1,
+                                  end = chrSize)
+    return(fillDT)
+  }
+  
+  # add the intra-TAD also as domains
+  fillDT_BD <- foreach(x = 1:nrow(fillDT), .combine='rbind') %dopar% {
+    if(x == 1) {
+      if(fillDT$start[1] == 1) {
+        tmpDT <- data.frame(chromo = fillDT$chromo[1],
+                            start = fillDT$start[1],
+                            end = fillDT$end[1])
+      } else{
+        tmpDT <- data.frame(chromo = c(fillDT$chromo[1],fillDT$chromo[1]),
+                            start = c(1, fillDT$start[1]),
+                            end = c(fillDT$start[1]-1,fillDT$end[1] ))
+      }
+    } else{
+      if(fillDT$start[x] > fillDT$end[x-1] + 1) {
+        tmpDT <- data.frame(chromo = c(fillDT$chromo[x], fillDT$chromo[x]),
+                            start = c(fillDT$end[x-1]+1, fillDT$start[x]),
+                            end = c(fillDT$start[x] -1, fillDT$end[x]))
+      } else{
+        tmpDT <- data.frame(chromo = fillDT$chromo[x],
+                            start = fillDT$start[x],
+                            end = fillDT$end[x])
+      }
+    }
+  }
+  fillDT_BD <- as.data.frame(fillDT_BD)
+  fillDT_BD$start <- as.numeric(as.character(fillDT_BD$start))
+  fillDT_BD$end <- as.numeric(as.character(fillDT_BD$end))
+  lastrow <- nrow(fillDT_BD)
+  if(fillDT_BD$end[lastrow] < chrSize ){
+    endDT <- data.frame(chromo = fillDT_BD$chromo[lastrow],
+                        start = fillDT_BD$end[lastrow] + 1,
+                        end = chrSize)
+    fillDT <- rbind(fillDT_BD, endDT)
+  } else{
+    fillDT <- fillDT_BD
+  }
+  
+  stopifnot(all( fillDT$end > fillDT$start  ))
+  stopifnot(!any(duplicated(fillDT$start)))
+  stopifnot(!any(duplicated(fillDT$end)))
+  return(fillDT)
 }
 
 

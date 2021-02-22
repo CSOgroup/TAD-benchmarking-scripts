@@ -33,7 +33,7 @@ res_step = 5
 proteins = c("CTCF", "RAD21", "SMC3")
 
 Tads_chr <- read.table(TadsFile, quote = '', stringsAsFactors=FALSE, sep = "\t", header = FALSE)
-chr = as.numeric(substr(unique(Tads_chr$V1),4,nchar(unique(Tads_chr$V1))))
+chr = as.character(substr(unique(Tads_chr$V1),4,nchar(unique(Tads_chr$V1))))
 
 ChrSizes = read.table(file = ChrSizes_file, quote = '', stringsAsFactors=FALSE, sep = "\t", header = FALSE)
 ChrSize = as.numeric(ChrSizes[ChrSizes[,1]==paste0('chr',as.character(chr)),2])
@@ -128,7 +128,7 @@ Final_Ratios_df$pval_of_peak <- NA
 
 for (protein in proteins)
 {
-   profile <- Final_EnrichPeaks_df[ ((Final_EnrichPeaks_df$TadsFile==TadsFile) & (Final_EnrichPeaks_df$resolution_kb==resolution_kb) & (Final_EnrichPeaks_df$protein==protein) ) , c(4:203)]
+   profile <- Final_EnrichPeaks_df[ ((Final_EnrichPeaks_df$TadsFile==TadsFile) & (Final_EnrichPeaks_df$resolution_kb==resolution_kb) & (Final_EnrichPeaks_df$protein==protein) ) , c(4:round(1000/res_step+3))]
 
    fc_over_bg_val <- mean_fc_over_bg(profile)
    pval_of_peak_val <- mean_pval_of_peak(profile, plot_dist = FALSE)
